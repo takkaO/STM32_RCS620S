@@ -101,7 +101,7 @@ int main(void) {
 	MX_USART2_UART_Init();
 	MX_USART3_UART_Init();
 	/* USER CODE BEGIN 2 */
-	int ret = RCS620S_initDevice(huart2);
+	int ret = RCS620S_initDevice(&huart2);
 	if (!ret) {
 		print("RCS620S initialize Error\r\n");
 		while (1) {
