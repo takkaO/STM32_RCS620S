@@ -14,3 +14,4 @@ Ported [RCS620S control library (Arduino)](http://blog.felicalauncher.com/?p=267
 |PA2|USART2_TX (RCS620S_RX)|
 |PA3|USART2_RX (RCS620S_TX)|
 |3.3V|RCS620S VCC|
+|GND|RCS620S_GND|
