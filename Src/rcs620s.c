@@ -15,12 +15,13 @@
 /* --------------------------------
  * Global variables
  * -------------------------------- */
+UART_HandleTypeDef rcs620s_huart;
 RCS620S_Global_Variables rcs620s_gv;
 
 /* --------------------------------
  * Private prototypes
  * -------------------------------- */
-void RCS620S_constructor(void);
+void RCS620S_constructor(UART_HandleTypeDef _huart);
 int RCS620S_rwCommand(const uint8_t *command, uint16_t commandLen,
 		uint8_t response[RCS620S_MAX_RW_RESPONSE_LEN], uint16_t *responseLen);
 void RCS620S_cancel(void);
@@ -31,13 +32,13 @@ int readSerial(uint8_t *buf, uint16_t bufLen);
 /* --------------------------------
  * Public functions
  * -------------------------------- */
-int RCS620S_initDevice(void) {
+int RCS620S_initDevice(UART_HandleTypeDef _huart) {
 	int ret;
 	uint8_t response[RCS620S_MAX_RW_RESPONSE_LEN];
 	uint16_t responseLen;
 
 	/* Initialize */
-	RCS620S_constructor();
+	RCS620S_constructor(_huart);
 
 	/* RFConfiguration (various timings) */
 	ret = RCS620S_rwCommand((const uint8_t*) "\xd4\x32\x02\x00\x00\x00", 6, response, &responseLen);
@@ -211,8 +212,9 @@ int RCS620S_readEncryption(uint16_t serviceCode, uint8_t blockNumber, uint8_t *b
  * Private functions
  * -------------------------------- */
 
-void RCS620S_constructor(void) {
+void RCS620S_constructor(UART_HandleTypeDef _huart) {
 	rcs620s_gv.timeout = RCS620S_DEFAULT_TIMEOUT;
+	rcs620s_huart = _huart;
 }
 
 int RCS620S_rwCommand(const uint8_t *command, uint16_t commandLen,
@@ -313,12 +315,12 @@ void writeSerial(const uint8_t *buf, uint16_t bufLen) {
 	uint8_t _buf[RCS620S_MAX_RW_RESPONSE_LEN];
 	memcpy(_buf, buf, bufLen);
 
-	HAL_UART_Transmit(&huart2, _buf, bufLen, rcs620s_gv.timeout);
+	HAL_UART_Transmit(&rcs620s_huart, _buf, bufLen, rcs620s_gv.timeout);
 }
 
 int readSerial(uint8_t *buf, uint16_t bufLen) {
 	HAL_StatusTypeDef ret;
-	ret = HAL_UART_Receive(&huart2, buf, bufLen, rcs620s_gv.timeout);
+	ret = HAL_UART_Receive(&rcs620s_huart, buf, bufLen, rcs620s_gv.timeout);
 	if (ret == HAL_OK) {
 		return 1;
 	}

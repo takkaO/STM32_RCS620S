@@ -29,7 +29,7 @@ extern RCS620S_Global_Variables rcs620s_gv;
 /* --------------------------------
  * Public prototypes
  * -------------------------------- */
-int RCS620S_initDevice(void);
+int RCS620S_initDevice(UART_HandleTypeDef _huart);
 int RCS620S_polling(uint16_t systemCode);
 int RCS620S_cardCommand(const uint8_t *command, uint8_t commandLen,
 		uint8_t response[RCS620S_MAX_CARD_RESPONSE_LEN], uint8_t *responseLen);
